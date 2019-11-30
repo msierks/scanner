@@ -77,13 +77,11 @@ func (s *Server) getClairLayer(w http.ResponseWriter, r *http.Request, layerName
 		Layer: &layer,
 	}
 
-	bytes, err := json.Marshal(env)
-	if err != nil {
+	if err := json.NewEncoder(w).Encode(env); err != nil {
 		clairError(w, http.StatusInternalServerError, err)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write(bytes)
 }
 
 // GetResultsBySHA implements retrieving scan data via image SHA.
