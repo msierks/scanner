@@ -58,6 +58,7 @@ func cleanURL(str string) string {
 
 func preProcessLayer(datastore database.Datastore, imageFormat, name, parentName string) (database.Layer, bool, error) {
 	// Verify parameters.
+
 	if name == "" {
 		return database.Layer{}, false, commonerr.NewBadRequestError("could not process a layer which does not have a name")
 	}
