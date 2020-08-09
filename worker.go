@@ -249,20 +249,21 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 			return nil
 		}
 
-		if strings.Contains(path, "release") {
-			log.Infof("Release name: %v", path)
-		}
+		//if strings.Contains(path, "release") {
+		//	log.Infof("Release name: %v", path)
+		//}
 
-		if filenameMatcher.Match(path, info) {
+		evalPath := path[1:]
+		if filenameMatcher.Match(evalPath, info) {
 			data, err := ioutil.ReadFile(path)
 			if err != nil {
 				return err
 			}
 			if strings.Contains(path, "release") {
-				log.Infof("Release name: %v", path)
+				log.Infof("Matching Release name: %v", path)
 			}
 			if path == "/etc/os-release" {
-				log.Infof("Data: %s", data)
+				log.Infof("Matching Data: %s", data)
 			}
 			files[path[1:]] = data
 		}
