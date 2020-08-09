@@ -40,10 +40,10 @@ const (
 )
 
 var (
-	// maxExtractableFileSize enforces the maximum size of a single file within a
+	// MaxExtractableFileSize enforces the maximum size of a single file within a
 	// tarball that will be extracted. This protects against malicious files that
 	// may used in an attempt to perform a Denial of Service attack.
-	maxExtractableFileSize int64 = DefaultMaxExtractableFileSizeMB * 1024 * 1024
+	MaxExtractableFileSize int64 = DefaultMaxExtractableFileSizeMB * 1024 * 1024
 
 	readLen     = 6 // max bytes to sniff
 	gzipHeader  = []byte{0x1f, 0x8b}
@@ -56,10 +56,10 @@ var (
 // SetMaxExtractableFileSize sets the max extractable file size.
 // It is NOT thread-safe, and callers must ensure that it is called
 // only when no scans are in progress (ex: during initialization).
-// See comments on the maxExtractableFileSize variable for
+// See comments on the MaxExtractableFileSize variable for
 // more details on its purpose.
 func SetMaxExtractableFileSize(val int64) {
-	maxExtractableFileSize = val
+	MaxExtractableFileSize = val
 }
 
 // FilesMap is a map of files' paths to their contents.
@@ -95,7 +95,7 @@ func ExtractFiles(r io.Reader, filenameMatcher matcher.Matcher) (FilesMap, error
 		}
 
 		// File size limit
-		if hdr.Size > maxExtractableFileSize {
+		if hdr.Size > MaxExtractableFileSize {
 			log.Errorf("Skipping file %q because it was too large (%d bytes)", filename, hdr.Size)
 			continue
 		}

@@ -15,10 +15,6 @@
 package clair
 
 import (
-	"io"
-	"os"
-	"regexp"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/stackrox/scanner/database"
 	"github.com/stackrox/scanner/ext/featurefmt"
@@ -30,6 +26,11 @@ import (
 	"github.com/stackrox/scanner/pkg/tarutil"
 	"github.com/stackrox/scanner/singletons/analyzers"
 	"github.com/stackrox/scanner/singletons/requiredfilenames"
+	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"regexp"
 )
 
 const (
@@ -204,6 +205,39 @@ func detectContent(imageFormat, name, path string, headers map[string]string, pa
 	}
 
 	return detectFromFiles(files, name, parent)
+}
+
+func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace, featureVersions []database.FeatureVersion, languageComponents []*component.Component, err error) {
+	filenameMatcher := requiredfilenames.SingletonMatcher()
+
+	files := make(map[string][]byte)
+	err = filepath.Walk("/", func(path string, info os.FileInfo, err error) error {
+		log.WithError(err).Error("walk error")
+
+		if info.IsDir() {
+			return nil
+		}
+		if info.Size() > tarutil.MaxExtractableFileSize {
+			log.Errorf("Skipping file %q because it was too large (%d bytes)", info.Name(), info.Size())
+			return nil
+		}
+		if info.Size() == 0 {
+			return nil
+		}
+
+		if filenameMatcher.Match(path, info) {
+			data, err := ioutil.ReadFile(path)
+			if err != nil {
+				return err
+			}
+			files[path] = data
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	return detectFromFiles(files, name, nil)
 }
 
 func DetectNamespace(name string, files tarutil.FilesMap, parent *database.Layer) (namespace *database.Namespace, err error) {
