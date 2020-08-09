@@ -20,6 +20,7 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/stackrox/scanner/database"
@@ -208,12 +209,21 @@ func detectContent(imageFormat, name, path string, headers map[string]string, pa
 	return detectFromFiles(files, name, parent)
 }
 
+var ignoredPaths = []string{
+	"/proc",
+}
+
 func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace, featureVersions []database.FeatureVersion, languageComponents []*component.Component, err error) {
 	filenameMatcher := requiredfilenames.SingletonMatcher()
 
 	files := make(map[string][]byte)
 	count := 0
 	err = filepath.Walk("/", func(path string, info os.FileInfo, err error) error {
+		for _, ignoredPath := range ignoredPaths {
+			if strings.HasPrefix(path, ignoredPath) {
+				return nil
+			}
+		}
 		count++
 		if count%10000 == 0 {
 			log.Infof("Processed %d files", count)
