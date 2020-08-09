@@ -26,11 +26,22 @@ import (
 	"github.com/stackrox/scanner/pkg/component"
 	"github.com/stretchr/testify/assert"
 
-	// Register the required detectors.
+	// Register database driver.
+	_ "github.com/stackrox/scanner/database/pgsql"
+
+	// Register extensions.
+	_ "github.com/stackrox/scanner/ext/featurefmt/apk"
 	_ "github.com/stackrox/scanner/ext/featurefmt/dpkg"
+	_ "github.com/stackrox/scanner/ext/featurefmt/rpm"
+	_ "github.com/stackrox/scanner/ext/featurens/alpinerelease"
 	_ "github.com/stackrox/scanner/ext/featurens/aptsources"
+	_ "github.com/stackrox/scanner/ext/featurens/lsbrelease"
 	_ "github.com/stackrox/scanner/ext/featurens/osrelease"
+	_ "github.com/stackrox/scanner/ext/featurens/redhatrelease"
 	_ "github.com/stackrox/scanner/ext/imagefmt/docker"
+
+	// Register validators
+	_ "github.com/stackrox/scanner/cpe/validation/all"
 )
 
 type mockDatastore struct {
