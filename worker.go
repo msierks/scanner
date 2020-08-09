@@ -168,6 +168,8 @@ func detectFromFiles(files tarutil.FilesMap, name string, parent *database.Layer
 		return nil, nil, nil, err
 	}
 
+	log.Infof("Found namespace: %+v", namespace)
+
 	// Detect features.
 	featureVersions, err = detectFeatureVersions(name, files, namespace, parent)
 	if err != nil {
@@ -252,6 +254,7 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 			if err != nil {
 				return err
 			}
+			log.Infof("Path: %v", path)
 			files[path] = data
 		}
 		return nil
