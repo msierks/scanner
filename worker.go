@@ -259,6 +259,9 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 	if err != nil {
 		return nil, nil, nil, err
 	}
+
+	log.Infof("Found %d matching files", len(files))
+
 	return detectFromFiles(files, name, nil)
 }
 
