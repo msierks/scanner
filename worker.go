@@ -261,6 +261,9 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 			if strings.Contains(path, "release") {
 				log.Infof("Release name: %v", path)
 			}
+			if path == "/etc/os-release" {
+				log.Infof("Data: %s", data)
+			}
 			files[path[1:]] = data
 		}
 		return nil
