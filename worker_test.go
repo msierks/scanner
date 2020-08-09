@@ -19,6 +19,7 @@ import (
 	"runtime"
 	"testing"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/stackrox/scanner/database"
 	"github.com/stackrox/scanner/ext/versionfmt/dpkg"
 	"github.com/stackrox/scanner/pkg/commonerr"
@@ -116,4 +117,13 @@ func TestProcessWithDistUpgrade(t *testing.T) {
 			assert.NotContains(t, jessie.Features, nufv)
 		}
 	}
+}
+
+func TestGetComponentsFromRawFilesystem(t *testing.T) {
+	// namespace *database.Namespace, featureVersions []database.FeatureVersion, languageComponents []*component.Component, err error
+	ns, fvs, lcs, err := GetComponentsFromRawFilesystem("test")
+	if err != nil {
+		panic(err)
+	}
+	log.Infof("%v %v %v", ns, len(fvs), len(lcs))
 }

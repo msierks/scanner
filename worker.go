@@ -15,6 +15,12 @@
 package clair
 
 import (
+	"io"
+	"io/ioutil"
+	"os"
+	"path/filepath"
+	"regexp"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/stackrox/scanner/database"
 	"github.com/stackrox/scanner/ext/featurefmt"
@@ -26,11 +32,6 @@ import (
 	"github.com/stackrox/scanner/pkg/tarutil"
 	"github.com/stackrox/scanner/singletons/analyzers"
 	"github.com/stackrox/scanner/singletons/requiredfilenames"
-	"io"
-	"io/ioutil"
-	"os"
-	"path/filepath"
-	"regexp"
 )
 
 const (
@@ -211,8 +212,19 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 	filenameMatcher := requiredfilenames.SingletonMatcher()
 
 	files := make(map[string][]byte)
+	count := 0
 	err = filepath.Walk("/", func(path string, info os.FileInfo, err error) error {
-		log.WithError(err).Error("walk error")
+		count++
+		if count%10000 == 0 {
+			log.Infof("Processed %d files", count)
+		}
+		if os.IsPermission(err) {
+			return nil
+		}
+
+		if err != nil {
+			log.WithError(err).Error("walk error")
+		}
 
 		if info.IsDir() {
 			return nil
