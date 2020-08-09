@@ -175,3 +175,25 @@ func (c *Clairify) RetrieveImageDataByName(image *types.Image, features, vulnera
 	}
 	return &layerEnvelope, err
 }
+
+// GetResultsFromComponents contacts Clairify to fetch vulnerability data by the image name.
+func (c *Clairify) GetResultsFromComponents(layer *v1.Layer) (*v1.LayerEnvelope, error) {
+	data, err := json.Marshal(layer)
+	if err != nil {
+		return nil, err
+	}
+	url := fmt.Sprintf("%s/scanner/image/components", c.endpoint)
+	request, err := http.NewRequest("POST", url, bytes.NewReader(data))
+	if err != nil {
+		return nil, err
+	}
+	envelopeData, err := c.sendRequest(request, ScanTimeout)
+	if err != nil {
+		return nil, err
+	}
+	var layerEnvelope v1.LayerEnvelope
+	if err := json.Unmarshal(envelopeData, &layerEnvelope); err != nil {
+		return nil, err
+	}
+	return &layerEnvelope, err
+}

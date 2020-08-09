@@ -205,6 +205,38 @@ func (s *Server) ScanImage(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
+// ScanImage implements pushing an image's layers to Clair.
+func (s *Server) GetResultsFromComponents(w http.ResponseWriter, r *http.Request) {
+	data, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		clairError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	var layer v1.Layer
+	if err := json.Unmarshal(data, &layer); err != nil {
+		clairError(w, http.StatusBadRequest, err)
+		return
+	}
+
+	layer, err = v1.EnrichLayer(s.storage, layer)
+	if err != nil {
+		clairError(w, http.StatusInternalServerError, err)
+		return
+	}
+
+	env := &v1.LayerEnvelope{
+		Layer: &layer,
+	}
+
+	bytes, err := json.Marshal(env)
+	if err != nil {
+		clairError(w, http.StatusInternalServerError, err)
+		return
+	}
+	w.Write(bytes)
+}
+
 // Ping implements a simple handler for verifying that Clairify is up.
 func (s *Server) Ping(w http.ResponseWriter, _ *http.Request) {
 	w.Write([]byte("{}"))
@@ -234,6 +266,7 @@ func (s *Server) Start() error {
 		s.handleFuncRouter(r, fmt.Sprintf("/%s/ping", root), s.Ping, http.MethodGet)
 		s.handleFuncRouter(r, fmt.Sprintf("/%s/sha/{sha}", root), s.GetResultsBySHA, http.MethodGet)
 		s.handleFuncRouter(r, fmt.Sprintf("/%s/image", root), s.ScanImage, http.MethodPost)
+		s.handleFuncRouter(r, fmt.Sprintf("/%s/image/components", root), s.GetResultsFromComponents, http.MethodPost)
 
 		r.PathPrefix(fmt.Sprintf("/%s/image/", root)).HandlerFunc(s.wrapHandlerFuncWithLicenseCheck(s.GetResultsByImage)).Methods(http.MethodGet)
 	}

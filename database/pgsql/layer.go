@@ -125,6 +125,16 @@ func (pgSQL *pgSQL) FindLayer(name string, withFeatures, withVulnerabilities boo
 	return layer, nil
 }
 
+func (pgSQL *pgSQL) LoadAffectedBy(featureVersions []database.FeatureVersion) error {
+	tx, err := pgSQL.Begin()
+	if err != nil {
+		return handleError("LoadAffectedBy.Begin()", err)
+	}
+	defer tx.Commit()
+
+	return loadAffectedBy(tx, featureVersions)
+}
+
 // getLayerFeatureVersions returns list of database.FeatureVersion that a database.Layer has.
 func getLayerFeatureVersions(tx *sql.Tx, layerID int) ([]database.FeatureVersion, error) {
 	var featureVersions []database.FeatureVersion
@@ -280,7 +290,7 @@ func (pgSQL *pgSQL) InsertLayer(layer database.Layer) error {
 	// Find or insert namespace if provided.
 	var namespaceID zero.Int
 	if layer.Namespace != nil {
-		n, err := pgSQL.insertNamespace(*layer.Namespace)
+		n, err := pgSQL.InsertNamespace(*layer.Namespace)
 		if err != nil {
 			return err
 		}
@@ -377,11 +387,11 @@ func (pgSQL *pgSQL) updateDiffFeatureVersions(tx *sql.Tx, layer *database.Layer)
 	}
 
 	// Insert FeatureVersions in the database.
-	addIDs, err := pgSQL.insertFeatureVersions(add)
+	addIDs, err := pgSQL.InsertFeatureVersions(add)
 	if err != nil {
 		return err
 	}
-	delIDs, err := pgSQL.insertFeatureVersions(del)
+	delIDs, err := pgSQL.InsertFeatureVersions(del)
 	if err != nil {
 		return err
 	}

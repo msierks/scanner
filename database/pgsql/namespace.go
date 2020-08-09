@@ -22,7 +22,7 @@ import (
 	"github.com/stackrox/scanner/pkg/commonerr"
 )
 
-func (pgSQL *pgSQL) insertNamespace(namespace database.Namespace) (int, error) {
+func (pgSQL *pgSQL) InsertNamespace(namespace database.Namespace) (int, error) {
 	if namespace.Name == "" {
 		return 0, commonerr.NewBadRequestError("could not find/insert invalid Namespace")
 	}
@@ -36,12 +36,12 @@ func (pgSQL *pgSQL) insertNamespace(namespace database.Namespace) (int, error) {
 	}
 
 	// We do `defer observeQueryTime` here because we don't want to observe cached namespaces.
-	defer observeQueryTime("insertNamespace", "all", time.Now())
+	defer observeQueryTime("InsertNamespace", "all", time.Now())
 
 	var id int
 	err := pgSQL.QueryRow(insertNamespace, namespace.Name, namespace.VersionFormat).Scan(&id)
 	if err != nil && err != sql.ErrNoRows {
-		return 0, handleError("insertNamespace", err)
+		return 0, handleError("InsertNamespace", err)
 	}
 	if err == sql.ErrNoRows {
 		// Query Namespace for the ID because it already exists.

@@ -137,4 +137,5 @@ func TestGetComponentsFromRawFilesystem(t *testing.T) {
 		panic(err)
 	}
 	log.Infof("%v %v %v", ns, len(fvs), len(lcs))
+
 }

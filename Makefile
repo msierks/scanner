@@ -227,7 +227,7 @@ db-image-rhel: $(CURDIR)/image/db/rhel/bundle.tar.gz
 deploy: clean-helm-rendered
 	@echo "+ $@"
 	kubectl create namespace stackrox || true
-	helm template chart/ --name scanner --set tag=$(TAG),logLevel=DEBUG,updateInterval=2m --output-dir rendered-chart
+	helm template chart/ --set tag=$(TAG),logLevel=DEBUG,updateInterval=2m --output-dir rendered-chart
 	kubectl apply -R -f rendered-chart
 
 .PHONY: deploy-dockerhub

@@ -43,7 +43,7 @@ func (pgSQL *pgSQL) insertFeature(feature database.Feature) (int, error) {
 	defer observeQueryTime("insertFeature", "all", time.Now())
 
 	// Find or create Namespace.
-	namespaceID, err := pgSQL.insertNamespace(feature.Namespace)
+	namespaceID, err := pgSQL.InsertNamespace(feature.Namespace)
 	if err != nil {
 		return 0, err
 	}
@@ -195,7 +195,7 @@ func (pgSQL *pgSQL) insertFeatureVersion(fv database.FeatureVersion) (id int, er
 }
 
 // TODO(Quentin-M): Batch me
-func (pgSQL *pgSQL) insertFeatureVersions(featureVersions []database.FeatureVersion) ([]int, error) {
+func (pgSQL *pgSQL) InsertFeatureVersions(featureVersions []database.FeatureVersion) ([]int, error) {
 	IDs := make([]int, 0, len(featureVersions))
 
 	for i := 0; i < len(featureVersions); i++ {

@@ -46,6 +46,8 @@ type Layer struct {
 	Format           string            `json:"Format,omitempty"`
 	IndexedByVersion int               `json:"IndexedByVersion,omitempty"`
 	Features         []Feature         `json:"Features,omitempty"`
+
+	Components []*component.Component `json:"Components"`
 }
 
 type languageFeatureKey struct {
@@ -164,6 +166,68 @@ func addLanguageVulns(db database.Datastore, layer *Layer) {
 		}
 	}
 	layer.Features = append(layer.Features, languageFeatures...)
+}
+
+func EnrichLayer(db database.Datastore, apiLayer Layer) (Layer, error) {
+	namespace := database.Namespace{
+		Name:          apiLayer.NamespaceName,
+		VersionFormat: apiLayer.Format,
+	}
+
+	namespaceID, err := db.InsertNamespace(namespace)
+	if err != nil {
+		return Layer{}, err
+	}
+	namespace.Model.ID = namespaceID
+
+	log.Infof("Found database ID of %v", namespaceID)
+
+	databaseFeatures := make([]database.FeatureVersion, 0, len(apiLayer.Features))
+	for _, apiFeature := range apiLayer.Features {
+		//if apiFeature.VersionFormat
+		databaseFeature := database.FeatureVersion{
+			Feature: database.Feature{
+				Name:      apiFeature.Name,
+				Namespace: namespace,
+				//SourceType: apiFeature.,
+				Location: apiFeature.Location,
+			},
+			Version: apiFeature.Version,
+		}
+		databaseFeatures = append(databaseFeatures, databaseFeature)
+	}
+	featureIDs, err := db.InsertFeatureVersions(databaseFeatures)
+	if err != nil {
+		return Layer{}, err
+	}
+	for i := 0; i < len(featureIDs); i++ {
+		databaseFeatures[i].Model.ID = featureIDs[i]
+		databaseFeatures[i].Feature.Model.ID = featureIDs[i]
+	}
+	log.Infof("Found Feature IDs via insertion: %+v", featureIDs)
+
+	log.Infof("Database features: %+v", databaseFeatures)
+	if err := db.LoadAffectedBy(databaseFeatures); err != nil {
+		return Layer{}, err
+	}
+
+	databaseFeatures = append(databaseFeatures, cpe.CheckForVulnerabilities("node", apiLayer.Components)...)
+
+	apiLayer.Features = apiLayer.Features[:0]
+	for _, dbFeatureVersion := range databaseFeatures {
+		feature := featureFromDatabaseModel(dbFeatureVersion)
+
+		for _, dbVuln := range dbFeatureVersion.AffectedBy {
+			vuln := VulnerabilityFromDatabaseModel(dbVuln)
+
+			if dbVuln.FixedBy != versionfmt.MaxVersion {
+				vuln.FixedBy = dbVuln.FixedBy
+			}
+			feature.Vulnerabilities = append(feature.Vulnerabilities, vuln)
+		}
+		apiLayer.Features = append(apiLayer.Features, feature)
+	}
+	return apiLayer, nil
 }
 
 func LayerFromDatabaseModel(db database.Datastore, dbLayer database.Layer, withFeatures, withVulnerabilities bool) (Layer, error) {

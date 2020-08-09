@@ -178,4 +178,8 @@ type Datastore interface {
 	InsertLayerComponents(l string, c []*component.Component) error
 
 	GetLayerLanguageComponents(layer string) ([]*component.LayerToComponents, error)
+
+	InsertNamespace(namespace Namespace) (int, error)
+	InsertFeatureVersions(featureVersions []FeatureVersion) ([]int, error)
+	LoadAffectedBy(featureVersions []FeatureVersion) error
 }

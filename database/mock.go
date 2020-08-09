@@ -44,6 +44,18 @@ type MockDatastore struct {
 	FctGetLayerLanguageComponents func(layer string) ([]*component.Component, error)
 }
 
+func (mds *MockDatastore) InsertNamespace(namespace Namespace) (int, error) {
+	panic("implement me")
+}
+
+func (mds *MockDatastore) InsertFeatureVersions(featureVersions []FeatureVersion) ([]int, error) {
+	panic("implement me")
+}
+
+func (mds *MockDatastore) LoadAffectedBy(featureVersions []FeatureVersion) error {
+	panic("implement me")
+}
+
 func (mds *MockDatastore) InsertLayer(layer Layer) error {
 	if mds.FctInsertLayer != nil {
 		return mds.FctInsertLayer(layer)

@@ -15,6 +15,7 @@
 package clair
 
 import (
+	"github.com/stackrox/scanner/pkg/matcher"
 	"io"
 	"io/ioutil"
 	"os"
@@ -215,9 +216,7 @@ var ignoredPaths = []string{
 	"/proc",
 }
 
-func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace, featureVersions []database.FeatureVersion, languageComponents []*component.Component, err error) {
-	filenameMatcher := requiredfilenames.SingletonMatcher()
-
+func GetComponentsFromRawFilesystem(name string, filenameMatcher matcher.Matcher) (namespace *database.Namespace, featureVersions []database.FeatureVersion, languageComponents []*component.Component, err error) {
 	files := make(map[string][]byte)
 	count := 0
 	err = filepath.Walk("/", func(path string, info os.FileInfo, err error) error {
@@ -249,10 +248,6 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 			return nil
 		}
 
-		//if strings.Contains(path, "release") {
-		//	log.Infof("Release name: %v", path)
-		//}
-
 		evalPath := path[1:]
 		if filenameMatcher.Match(evalPath, info) {
 			data, err := ioutil.ReadFile(path)
@@ -265,7 +260,7 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 			if path == "/etc/os-release" {
 				log.Infof("Matching Data: %s", data)
 			}
-			files[path[1:]] = data
+			files[evalPath] = data
 		}
 		return nil
 	})
