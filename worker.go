@@ -254,7 +254,6 @@ func GetComponentsFromRawFilesystem(name string) (namespace *database.Namespace,
 			if err != nil {
 				return err
 			}
-			log.Infof("Path: %v", path)
 			files[path[1:]] = data
 		}
 		return nil
