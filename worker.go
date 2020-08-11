@@ -15,13 +15,11 @@
 package clair
 
 import (
-	"github.com/stackrox/scanner/pkg/matcher"
 	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
-	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/stackrox/scanner/database"
@@ -212,64 +210,24 @@ func detectContent(imageFormat, name, path string, headers map[string]string, pa
 	return detectFromFiles(files, name, parent)
 }
 
-var ignoredPaths = []string{
-	"/proc",
-}
-
-func GetComponentsFromRawFilesystem(name string, filenameMatcher matcher.Matcher) (namespace *database.Namespace, featureVersions []database.FeatureVersion, languageComponents []*component.Component, err error) {
+func GetComponentsFromRawFilesystem(name string, prefix string, filenames []string) (namespace *database.Namespace, featureVersions []database.FeatureVersion, languageComponents []*component.Component, err error) {
 	files := make(map[string][]byte)
-	count := 0
-	err = filepath.Walk("/", func(path string, info os.FileInfo, err error) error {
-		for _, ignoredPath := range ignoredPaths {
-			if strings.HasPrefix(path, ignoredPath) {
-				return nil
-			}
-		}
-		count++
-		if count%10000 == 0 {
-			log.Infof("Processed %d files", count)
-		}
-		if os.IsPermission(err) {
-			return nil
-		}
 
+	for _, file := range filenames {
+		log.Infof("Looking for file: %q", file)
+		fullPath := filepath.Join(prefix, file)
+		log.Infof("Fullpath: %v", fullPath)
+		data, err := ioutil.ReadFile(fullPath)
 		if err != nil {
-			log.WithError(err).Error("walk error")
-		}
-
-		if info.IsDir() {
-			return nil
-		}
-		if info.Size() > tarutil.MaxExtractableFileSize {
-			log.Errorf("Skipping file %q because it was too large (%d bytes)", info.Name(), info.Size())
-			return nil
-		}
-		if info.Size() == 0 {
-			return nil
-		}
-
-		evalPath := path[1:]
-		if filenameMatcher.Match(evalPath, info) {
-			data, err := ioutil.ReadFile(path)
-			if err != nil {
-				return err
+			if !os.IsNotExist(err) {
+				log.Errorf("error reading %v", err)
+			} else {
+				log.Infof("file %q does not exist: %v", fullPath)
 			}
-			if strings.Contains(path, "release") {
-				log.Infof("Matching Release name: %v", path)
-			}
-			if path == "/etc/os-release" {
-				log.Infof("Matching Data: %s", data)
-			}
-			files[evalPath] = data
+			continue
 		}
-		return nil
-	})
-	if err != nil {
-		return nil, nil, nil, err
+		files[file] = data
 	}
-
-	log.Infof("Found %d matching files", len(files))
-
 	return detectFromFiles(files, name, nil)
 }
 
