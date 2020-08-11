@@ -92,7 +92,7 @@ func VulnerabilityFromDatabaseModel(dbVuln database.Vulnerability) Vulnerability
 	return vuln
 }
 
-func featureFromDatabaseModel(dbFeatureVersion database.FeatureVersion) Feature {
+func FeatureFromDatabaseModel(dbFeatureVersion database.FeatureVersion) Feature {
 	version := dbFeatureVersion.Version
 	if version == versionfmt.MaxVersion {
 		version = "None"
@@ -156,7 +156,7 @@ func addLanguageVulns(db database.Datastore, layer *Layer) {
 
 	var languageFeatures []Feature
 	for _, dbFeatureVersion := range languageFeatureVersions {
-		feature := featureFromDatabaseModel(dbFeatureVersion)
+		feature := FeatureFromDatabaseModel(dbFeatureVersion)
 
 		for _, dbVuln := range dbFeatureVersion.AffectedBy {
 			feature.Vulnerabilities = append(feature.Vulnerabilities, VulnerabilityFromDatabaseModel(dbVuln))
@@ -215,7 +215,7 @@ func EnrichLayer(db database.Datastore, apiLayer Layer) (Layer, error) {
 
 	apiLayer.Features = apiLayer.Features[:0]
 	for _, dbFeatureVersion := range databaseFeatures {
-		feature := featureFromDatabaseModel(dbFeatureVersion)
+		feature := FeatureFromDatabaseModel(dbFeatureVersion)
 
 		for _, dbVuln := range dbFeatureVersion.AffectedBy {
 			vuln := VulnerabilityFromDatabaseModel(dbVuln)
@@ -246,7 +246,7 @@ func LayerFromDatabaseModel(db database.Datastore, dbLayer database.Layer, withF
 
 	if (withFeatures || withVulnerabilities) && dbLayer.Features != nil {
 		for _, dbFeatureVersion := range dbLayer.Features {
-			feature := featureFromDatabaseModel(dbFeatureVersion)
+			feature := FeatureFromDatabaseModel(dbFeatureVersion)
 
 			for _, dbVuln := range dbFeatureVersion.AffectedBy {
 				vuln := VulnerabilityFromDatabaseModel(dbVuln)
