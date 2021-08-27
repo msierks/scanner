@@ -403,6 +403,7 @@ commands:
 
       - run:
           name: Deploy into the cluster
+          no_output_timeout: 20m
           command: |
             if [[ "<< parameters.cluster-id >>" == "rhel" ]]; then
               make deploy-rhel
