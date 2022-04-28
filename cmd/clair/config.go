@@ -45,6 +45,9 @@ type Config struct {
 
 	// CentralEndpoint is the endpoint that central can be reached at. Defaults to https://central.stackrox.svc if not present in the config.
 	CentralEndpoint string `yaml:"centralEndpoint"`
+
+	// SensorEndpoint is the endpoint that Sensor can be reached at. Defaults to https://sensor.stackrox.svc if not present in the config.
+	SensorEndpoint string `yaml:"sensorEndpoint"`
 }
 
 // DefaultConfig is a configuration that can be used as a fallback value.
@@ -64,6 +67,8 @@ func DefaultConfig() Config {
 		MaxExtractableFileSizeMB:       tarutil.DefaultMaxExtractableFileSizeMB,
 		MaxELFExecutableFileSizeMB:     tarutil.DefaultMaxELFExecutableFileSizeMB,
 		MaxImageFileReaderBufferSizeMB: tarutil.DefaultMaxLazyReaderBufferSizeMB,
+		CentralEndpoint:                "https://central.stackrox.svc",
+		SensorEndpoint:                 "https://sensor.stackrox.svc",
 	}
 }
 

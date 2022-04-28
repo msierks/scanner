@@ -144,7 +144,14 @@ func Boot(config *Config, slimMode bool) {
 	wg.Wait()
 	defer db.Close()
 
-	if !slimMode {
+	if slimMode {
+		u, err := updater.NewSlimUpdater(config.Updater, config.SensorEndpoint, repoToCPE)
+		if err != nil {
+			log.WithError(err).Fatal("Failed to initialize slim updater")
+		}
+		go u.RunForever()
+		defer u.Stop()
+	} else {
 		u, err := updater.New(config.Updater, config.CentralEndpoint, db, repoToCPE, nvdVulnCache, k8sVulnCache)
 		if err != nil {
 			log.WithError(err).Fatal("Failed to initialize updater")
