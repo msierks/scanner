@@ -41,7 +41,7 @@ type SlimUpdater struct {
 }
 
 // NewSlimUpdater creates and initialize a new slim updater.
-func NewSlimUpdater(updaterConfig Config, sensorEndpoint string, repoToCPE *repo2cpe.Mapping) (*SlimUpdater, error) { //
+func NewSlimUpdater(updaterConfig Config, sensorEndpoint string, repoToCPE *repo2cpe.Mapping) (*SlimUpdater, error) {
 	// Get the most recent genesis dump UUID, and construct the update URL.
 	uuid, err := getMostRecentGenesisDumpUUID()
 	if err != nil {
@@ -114,7 +114,13 @@ func (u SlimUpdater) update() error {
 	if err := os.MkdirAll(path.Dir(u.repoToCPELocalFilename), 0700); err != nil {
 		return errors.Wrap(err, "creating slim updater output dir")
 	}
-	fetched, err := fetchDumpFromURL(u.stopSig, u.sensorClient, u.repoToCPEURL, u.lastUpdatedTime, u.repoToCPELocalFilename)
+	fetched, err := fetchDumpFromURL(
+		u.stopSig,
+		u.sensorClient,
+		u.repoToCPEURL,
+		u.lastUpdatedTime,
+		u.repoToCPELocalFilename,
+	)
 	if err != nil {
 		return errors.Wrap(err, "fetching update from URL")
 	}
