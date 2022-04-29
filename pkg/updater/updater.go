@@ -131,7 +131,7 @@ func New(config Config, centralEndpoint string, db database.Datastore, repoToCPE
 		return nil, errors.Wrap(err, "getting relevant download URL")
 	}
 
-	client := newHttpClient(proxy.RoundTripper())
+	client := newHTTPClient(proxy.RoundTripper())
 	clientConfig, err := mtls.TLSClientConfigForCentral()
 	if err != nil {
 		return nil, errors.Wrap(err, "generating TLS client config for Central")

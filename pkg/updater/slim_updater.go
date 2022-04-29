@@ -1,6 +1,14 @@
 package updater
 
 import (
+	"net/http"
+	"net/url"
+	"os"
+	"path"
+	"path/filepath"
+	"strings"
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stackrox/rox/pkg/clientconn"
@@ -10,13 +18,6 @@ import (
 	"github.com/stackrox/rox/pkg/utils"
 	"github.com/stackrox/scanner/pkg/repo2cpe"
 	"github.com/stackrox/scanner/pkg/wellknowndirnames"
-	"net/http"
-	"net/url"
-	"os"
-	"path"
-	"path/filepath"
-	"strings"
-	"time"
 )
 
 const (
@@ -67,7 +68,7 @@ func NewSlimUpdater(updaterConfig Config, sensorEndpoint string, repoToCPE *repo
 		nil,
 		clientconn.UseServiceCertToken(true),
 	)
-	sensorClient := newHttpClient(transport)
+	sensorClient := newHTTPClient(transport)
 	if err != nil {
 		return nil, errors.Wrap(err, "generating TLS client config for Central")
 	}
@@ -86,6 +87,7 @@ func NewSlimUpdater(updaterConfig Config, sensorEndpoint string, repoToCPE *repo
 	return slimUpdater, nil
 }
 
+// RunForever starts the updater loop.
 func (u SlimUpdater) RunForever() {
 	t := time.NewTicker(u.interval)
 	defer t.Stop()
@@ -103,12 +105,13 @@ func (u SlimUpdater) RunForever() {
 
 }
 
+// Stop stops the updater loop.
 func (u SlimUpdater) Stop() {
 	u.stopSig.Signal()
 }
 
 // update performs the slim updater steps.
-func (u SlimUpdater) update() error {
+func (u *SlimUpdater) update() error {
 	logrus.Info("starting slim update")
 	startTime := time.Now()
 	if err := os.MkdirAll(path.Dir(u.repoToCPELocalFilename), 0700); err != nil {

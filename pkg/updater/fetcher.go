@@ -1,15 +1,16 @@
 package updater
 
 import (
+	"io"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/stackrox/rox/pkg/concurrency"
 	"github.com/stackrox/rox/pkg/httputil"
 	"github.com/stackrox/rox/pkg/utils"
-	"io"
-	"net/http"
-	"os"
-	"time"
 )
 
 const (
@@ -17,7 +18,7 @@ const (
 	defaultTimeout        = 5 * time.Minute
 )
 
-func newHttpClient(transport http.RoundTripper) *http.Client {
+func newHTTPClient(transport http.RoundTripper) *http.Client {
 	return &http.Client{
 		Timeout:   defaultTimeout,
 		Transport: transport,
