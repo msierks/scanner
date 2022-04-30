@@ -137,7 +137,8 @@ func New(config Config, centralEndpoint string, db database.Datastore, repoToCPE
 		return nil, errors.Wrap(err, "generating TLS client config for Central")
 	}
 	client.Transport = &http.Transport{
-		TLSClientConfig: clientConfig,
+		TLSClientConfig:    clientConfig,
+		DisableCompression: true,
 		// Values are taken from http.DefaultTransport, Go 1.17.3
 		MaxIdleConns:          100,
 		IdleConnTimeout:       90 * time.Second,
