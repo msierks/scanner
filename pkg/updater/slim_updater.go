@@ -88,7 +88,7 @@ func NewSlimUpdater(updaterConfig Config, sensorEndpoint string, repoToCPE *repo
 }
 
 // RunForever starts the updater loop.
-func (u SlimUpdater) RunForever() {
+func (u *SlimUpdater) RunForever() {
 	t := time.NewTicker(u.interval)
 	defer t.Stop()
 	for {
@@ -106,7 +106,7 @@ func (u SlimUpdater) RunForever() {
 }
 
 // Stop stops the updater loop.
-func (u SlimUpdater) Stop() {
+func (u *SlimUpdater) Stop() {
 	u.stopSig.Signal()
 }
 

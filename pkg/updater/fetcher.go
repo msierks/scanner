@@ -42,7 +42,7 @@ func fetchDumpFromURL(ctx concurrency.Waitable, client *http.Client, url string,
 		return false, nil
 	}
 	if resp.StatusCode == http.StatusNotFound {
-		logrus.Warnf("vulnerability definition not found: %s", url)
+		logrus.Warnf("definition not found: %s", url)
 		return false, nil
 	}
 	if err := httputil.ResponseToError(resp); err != nil {

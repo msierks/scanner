@@ -147,7 +147,7 @@ func Boot(config *Config, slimMode bool) {
 	if slimMode {
 		u, err := updater.NewSlimUpdater(config.Updater, config.SensorEndpoint, repoToCPE)
 		if err != nil {
-			log.WithError(err).Fatal("failed to initialize slim updater")
+			log.WithError(err).Fatal("Failed to initialize slim updater")
 		}
 		go u.RunForever()
 		defer u.Stop()
