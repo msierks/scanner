@@ -51,7 +51,7 @@ func NewSlimUpdater(updaterConfig Config, sensorEndpoint string, repoToCPE *repo
 	repoToCPEURL, err := urlfmt.FullyQualifiedURL(
 		strings.Join([]string{
 			urlfmt.FormatURL(sensorEndpoint, urlfmt.HTTPS, urlfmt.NoTrailingSlash),
-			"/scanner/definitions",
+			"scanner/definitions",
 		}, "/"),
 		url.Values{
 			"uuid": []string{uuid},
