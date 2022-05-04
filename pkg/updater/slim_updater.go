@@ -21,7 +21,7 @@ import (
 )
 
 const (
-	repoToCPEFilename = "rhvel2/repository-to-cpe.json"
+	repoToCPEFilename = "rhelv2/repository-to-cpe.json"
 )
 
 var (
