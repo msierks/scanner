@@ -3,11 +3,11 @@ module github.com/stackrox/scanner
 go 1.16
 
 require (
-	cloud.google.com/go/storage v1.22.0
+	cloud.google.com/go/storage v1.22.1
 	github.com/NYTimes/gziphandler v1.1.1
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/ckaznocha/protoc-gen-lint v0.2.4
-	github.com/containers/image/v5 v5.20.0
+	github.com/containers/image/v5 v5.21.1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/docker/distribution v2.8.1+incompatible
 	github.com/docker/docker-credential-helpers v0.6.4
@@ -23,12 +23,12 @@ require (
 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0
 	github.com/guregu/null v4.0.0+incompatible
-	github.com/hashicorp/go-version v1.4.0
+	github.com/hashicorp/go-version v1.5.0
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/heroku/docker-registry-client v0.0.0
 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f
 	github.com/knqyf263/go-rpm-version v0.0.0-20170716094938-74609b86c936
-	github.com/lib/pq v1.10.5
+	github.com/lib/pq v1.10.6
 	github.com/mailru/easyjson v0.7.7
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/mitchellh/hashstructure v1.1.0
@@ -36,7 +36,7 @@ require (
 	github.com/opencontainers/image-spec v1.0.3-0.20211202193544-a5463b7f9c84
 	github.com/pborman/uuid v1.2.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.12.1
+	github.com/prometheus/client_golang v1.12.2
 	github.com/quay/goval-parser v0.8.6
 	github.com/remind101/migrate v0.0.0-20170729031349-52c1edff7319
 	github.com/sirupsen/logrus v1.8.1
@@ -44,12 +44,13 @@ require (
 	github.com/stackrox/dotnet-scraper v0.0.0-20201023051640-72ef543323dd
 	github.com/stackrox/k8s-cves v0.0.0-20201110001126-cc333981eaab
 	github.com/stackrox/rox v0.0.0-20210914215712-9ac265932e28
-	github.com/stretchr/testify v1.7.1
+	github.com/stretchr/testify v1.7.2
 	go.etcd.io/bbolt v1.3.6
+	go.opentelemetry.io/otel/internal/metric v0.27.0 // indirect
 	go.uber.org/ratelimit v0.2.0
-	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6
-	google.golang.org/api v0.79.0
-	google.golang.org/grpc v1.46.0
+	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a
+	google.golang.org/api v0.83.0
+	google.golang.org/grpc v1.47.0
 	gopkg.in/yaml.v2 v2.4.0
 )
 
