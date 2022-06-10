@@ -2,6 +2,7 @@ package all
 
 import (
 	// Import all the vulnsrc providers.
+	_ "github.com/stackrox/scanner/ext/vulnsrc/alma"
 	_ "github.com/stackrox/scanner/ext/vulnsrc/alpine"
 	_ "github.com/stackrox/scanner/ext/vulnsrc/amzn"
 	_ "github.com/stackrox/scanner/ext/vulnsrc/debian"

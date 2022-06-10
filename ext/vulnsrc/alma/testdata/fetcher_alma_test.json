@@ -1,0 +1,63 @@
+[
+  {
+    "updateinfo_id": "ALSA-2021:2988",
+    "issued_date": {"$date": 1627914638000},
+    "fromstr": "packager@almalinux.org",
+    "title": "Important: varnish:6 security update",
+    "type": "security",
+    "release": "0",
+    "version": "1",
+    "rights": "Copyright 2021 AlmaLinux OS",
+    "solution": null,
+    "status": "final",
+    "severity": "Important",
+    "summary": "An update for the varnish:6 module is now available for AlmaLinux AlmaLinux Extended Update Support, and AlmaLinux Extended Update Support.\n\nAlmaLinux Product Security has rated this update as having a security impact of Important. A Common Vulnerability Scoring System (CVSS) base score, which gives a detailed severity rating, is available for each vulnerability from the CVE link(s) in the References section.",
+    "pushcount": "3",
+    "updated_date": {"$date": 1628078163000},
+    "pkglist": {
+      "name": "almalinux-8-for-x86_64-appstream-rpms__8_1_varnish",
+      "shortname": "almalinux-8-for-x86_64-appstream-rpms__8_1_varnish",
+      "packages": [
+        {
+          "src": "varnish-6.0.6-2.module_el8.4.0+2514+e762eaa1.1.src.rpm",
+          "name": "varnish",
+          "epoch": "0",
+          "version": "6.0.6",
+          "release": "2.module_el8.4.0+2514+e762eaa1.1",
+          "arch": "x86_64",
+          "filename": "varnish-6.0.6-2.module_el8.4.0+2514+e762eaa1.1.x86_64.rpm",
+          "sum": "630d16fde73dc79b47178a6a487e190f96925875b43d24f75e1c1999b2959cc2",
+          "sum_type": 5,
+          "reboot_suggested": 0
+        }, {
+          "src": "varnish-6.0.6-2.module_el8.4.0+2514+e762eaa1.1.src.rpm",
+          "name": "varnish-devel",
+          "epoch": "0",
+          "version": "6.0.6",
+          "release": "2.el8.4.0+2514+e762eaa1.1",
+          "arch": "x86_64",
+          "filename": "varnish-devel-6.0.6-2.module_el8.4.0+2514+e762eaa1.1.x86_64.rpm",
+          "sum": "b1b18fe6044c9b616b261740ea86a2c1088f489e815a03c7c39c3787cb8724a9",
+          "sum_type": 5,
+          "reboot_suggested": 0
+        }
+      ],
+      "module": {
+        "stream": "6",
+        "name": "varnish",
+        "version": 8040020210804094326,
+        "arch": "x86_64",
+        "context": "522a0ee4"
+      }
+    },
+    "description": "Varnish Cache is a high-performance HTTP accelerator. It stores web pages in memory so web servers don't have to create the same web page over and over again, giving the website a significant speed up.\n\nSecurity Fix(es):\n\n* varnish: HTTP/2 request smuggling attack via a large Content-Length header for a POST request (CVE-2021-36740)\n\nFor more details about the security issue(s), including the impact, a CVSS score, acknowledgments, and other related information, refer to the CVE page(s) listed in the References section.",
+    "references": [
+      {
+        "href": "https://vulners.com/cve/CVE-2021-36740",
+        "type": "cve",
+        "id": "CVE-2021-36740",
+        "title": "CVE-2021-36740"
+      }
+    ]
+  }
+]
